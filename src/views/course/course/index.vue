@@ -10,12 +10,14 @@
         />
       </el-form-item>
       <el-form-item label="课程学科" prop="subject">
-        <el-input
-          v-model="queryParams.subject"
-          placeholder="请输入课程学科"
-          clearable
-          @keyup.enter="handleQuery"
-        />
+        <el-select v-model="queryParams.subject" placeholder="请选择课程学科" clearable>
+          <el-option
+            v-for="dict in crouse_subject"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="课程名称" prop="name">
         <el-input
@@ -26,12 +28,14 @@
         />
       </el-form-item>
       <el-form-item label="适用人群" prop="applicablePerson">
-        <el-input
-          v-model="queryParams.applicablePerson"
-          placeholder="请输入适用人群"
-          clearable
-          @keyup.enter="handleQuery"
-        />
+        <el-select v-model="queryParams.applicablePerson" placeholder="请选择适用人群" clearable>
+          <el-option
+            v-for="dict in adapt_people"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="课程介绍" prop="info">
         <el-input
@@ -93,10 +97,18 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="课程id" align="center" prop="id" />
       <el-table-column label="课程编码" align="center" prop="code" />
-      <el-table-column label="课程学科" align="center" prop="subject" />
+      <el-table-column label="课程学科" align="center" prop="subject">
+        <template #default="scope">
+          <dict-tag :options="crouse_subject" :value="scope.row.subject"/>
+        </template>
+      </el-table-column>
       <el-table-column label="课程名称" align="center" prop="name" />
       <el-table-column label="价格" align="center" prop="price" />
-      <el-table-column label="适用人群" align="center" prop="applicablePerson" />
+      <el-table-column label="适用人群" align="center" prop="applicablePerson">
+        <template #default="scope">
+          <dict-tag :options="adapt_people" :value="scope.row.applicablePerson"/>
+        </template>
+      </el-table-column>
       <el-table-column label="课程介绍" align="center" prop="info" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -121,7 +133,14 @@
           <el-input v-model="form.code" placeholder="请输入课程编码" />
         </el-form-item>
         <el-form-item label="课程学科" prop="subject">
-          <el-input v-model="form.subject" placeholder="请输入课程学科" />
+          <el-select v-model="form.subject" placeholder="请选择课程学科">
+            <el-option
+              v-for="dict in crouse_subject"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="课程名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入课程名称" />
@@ -130,7 +149,14 @@
           <el-input v-model="form.price" placeholder="请输入价格" />
         </el-form-item>
         <el-form-item label="适用人群" prop="applicablePerson">
-          <el-input v-model="form.applicablePerson" placeholder="请输入适用人群" />
+          <el-select v-model="form.applicablePerson" placeholder="请选择适用人群">
+            <el-option
+              v-for="dict in adapt_people"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="课程介绍" prop="info">
           <el-input v-model="form.info" placeholder="请输入课程介绍" />
@@ -150,6 +176,7 @@
 import { listCourse, getCourse, delCourse, addCourse, updateCourse } from "@/api/course/course";
 
 const { proxy } = getCurrentInstance();
+const { adapt_people, crouse_subject } = proxy.useDict('adapt_people', 'crouse_subject');
 
 const courseList = ref([]);
 const open = ref(false);
@@ -173,6 +200,21 @@ const data = reactive({
     info: null,
   },
   rules: {
+    code: [
+      { required: true, message: "课程编码不能为空", trigger: "blur" }
+    ],
+    name: [
+      { required: true, message: "课程名称不能为空", trigger: "blur" }
+    ],
+    price: [
+      { required: true, message: "价格不能为空", trigger: "blur" }
+    ],
+    createTime: [
+      { required: true, message: "创建时间不能为空", trigger: "blur" }
+    ],
+    updateTime: [
+      { required: true, message: "更新时间不能为空", trigger: "blur" }
+    ]
   }
 });
 
